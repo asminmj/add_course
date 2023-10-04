@@ -1,0 +1,49 @@
+{
+  "dataSources": [
+    "Gdata"
+  ],
+  "generator": "@radzen/blazor-server",
+  "https": false,
+  "layouts": [
+    "Login",
+    "Main"
+  ],
+  "logo": "",
+  "name": "G",
+  "navigation": [
+    "Course"
+  ],
+  "pages": [
+    "Course",
+    "Login",
+    "Application Roles",
+    "Add Application Role",
+    "Application Users",
+    "Register Application User",
+    "Add Application User",
+    "Edit Application User",
+    "Unauthorized",
+    "Profile"
+  ],
+  "security": {
+    "autoGeneratePages": true,
+    "dataSource": "Gdata",
+    "duration": 5,
+    "emailConfirmation": false,
+    "layout": "Main",
+    "loginLayout": "Login",
+    "provider": "default",
+    "sessionRefresh": false,
+    "smtpFrom": "",
+    "smtpPassword": "",
+    "smtpSSL": false,
+    "smtpServer": "",
+    "smtpUser": "",
+    "loginPage": "Login"
+  },
+  "serverLang": "cs",
+  "serverProject": true,
+  "serverVersion": "7",
+  "startPage": "Course",
+  "theme": "standard"
+}

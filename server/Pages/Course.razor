@@ -1,0 +1,118 @@
+﻿@page "/"
+@page "/course"
+@layout MainLayout
+@inherits G.Pages.CourseComponent
+
+@using Radzen
+@using Radzen.Blazor
+@using G.Models.Gdata
+@using Microsoft.AspNetCore.Identity;
+@using G.Models
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+<PageTitle>Course</PageTitle>
+<RadzenContent Container="main">
+  <ChildContent>
+    <RadzenHeading Size="H1" Text="Course">
+    </RadzenHeading>
+    <div style="height: 100%" class="row">
+      <div class="col-md-6">
+        <RadzenCard style="height: 100%">
+          <ChildContent>
+            <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add" Click="@Button0Click">
+            </RadzenButton>
+            <RadzenDataGrid @ref="grid0" AllowFiltering="true" FilterMode="Radzen.FilterMode.Advanced" AllowPaging="true" AllowSorting="true" Data="@getCoursesResult" TItem="G.Models.Gdata.Course" ColumnWidth="150px" RowSelect="@Grid0RowSelect">
+              <Columns>
+                <RadzenDataGridColumn TItem="G.Models.Gdata.Course" Property="CourseID" Title="Course ID">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="G.Models.Gdata.Course" Property="Title" Title="Title">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="G.Models.Gdata.Course" Property="Credits" Title="Credits">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="G.Models.Gdata.Course" Property="DepartmentID" SortProperty="Department.Name" GroupProperty="Department.Name" FilterProperty="Department.Name" Title="Department">
+                  <Template Context="data">
+                  @(data.Department?.Name)
+                  </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="G.Models.Gdata.Course" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                  <Template Context="gModelsGdataCourse">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@((args) =>GridDeleteButtonClick(args, gModelsGdataCourse))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                  </Template>
+                </RadzenDataGridColumn>
+              </Columns>
+            </RadzenDataGrid>
+          </ChildContent>
+        </RadzenCard>
+      </div>
+      <div class="col-md-6">
+        <RadzenCard style="height: 100%">
+          <ChildContent>
+            <div class="row">
+              <div class="col-md-12">
+                <RadzenTemplateForm TItem="G.Models.Gdata.Course" Data="@course" Visible="@(course != null && canEdit)" Submit="@Form0Submit">
+                  <ChildContent>
+                    <div style="margin-bottom: 1rem" class="row">
+                      <div class="col-md-3">
+                        <RadzenLabel Text="Course Id" Component="CourseID" style="width: 100%">
+                        </RadzenLabel>
+                      </div>
+                      <div class="col-md-9">
+                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(course.CourseID)" Name="CourseID">
+                        </RadzenNumeric>
+                        <RadzenRequiredValidator Component="CourseID" Text="CourseID is required" style="position: absolute">
+                        </RadzenRequiredValidator>
+                      </div>
+                    </div>
+                    <div style="margin-bottom: 1rem" class="row">
+                      <div class="col-md-3">
+                        <RadzenLabel Text="Title" Component="Title" style="width: 100%">
+                        </RadzenLabel>
+                      </div>
+                      <div class="col-md-9">
+                        <RadzenTextBox style="width: 100%" @bind-Value="@(course.Title)" Name="Title">
+                        </RadzenTextBox>
+                      </div>
+                    </div>
+                    <div style="margin-bottom: 1rem" class="row">
+                      <div class="col-md-3">
+                        <RadzenLabel Text="Credits" Component="Credits" style="width: 100%">
+                        </RadzenLabel>
+                      </div>
+                      <div class="col-md-9">
+                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(course.Credits)" Name="Credits">
+                        </RadzenNumeric>
+                        <RadzenRequiredValidator Component="Credits" Text="Credits is required" style="position: absolute">
+                        </RadzenRequiredValidator>
+                      </div>
+                    </div>
+                    <div style="margin-bottom: 1rem" class="row">
+                      <div class="col-md-3">
+                        <RadzenLabel Text="Department" Component="DepartmentID" style="width: 100%">
+                        </RadzenLabel>
+                      </div>
+                      <div class="col-md-9">
+                        <RadzenDropDown Data="@getDepartmentsResult" TextProperty="Name" ValueProperty="DepartmentID" Placeholder="Choose Department" style="display: block; width: 100%" @bind-Value="@(course.DepartmentID)" Name="DepartmentID">
+                        </RadzenDropDown>
+                        <RadzenRequiredValidator Component="DepartmentID" Text="DepartmentID is required" style="position: absolute" DefaultValue="0">
+                        </RadzenRequiredValidator>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col offset-sm-3">
+                        <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" ButtonStyle="ButtonStyle.Primary">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Light" style="margin-left: 1rem" Text="Cancel" Visible="false">
+                        </RadzenButton>
+                      </div>
+                    </div>
+                  </ChildContent>
+                </RadzenTemplateForm>
+              </div>
+            </div>
+          </ChildContent>
+        </RadzenCard>
+      </div>
+    </div>
+  </ChildContent>
+</RadzenContent>

@@ -1,0 +1,1547 @@
+{
+  "info": {
+    "title": "Gdata",
+    "x-type": "odata",
+    "x-connector": "sqlite",
+    "x-concurrency": true
+  },
+  "definitions": {
+    "Course": {
+      "x-table": "dbo.Course",
+      "resource": "Courses",
+      "required": [
+        "CourseID",
+        "Credits",
+        "DepartmentID"
+      ],
+      "properties": {
+        "CourseID": {
+          "x-key": true,
+          "x-nullable": false,
+          "type": "integer",
+          "x-navigation": [
+            {
+              "inversePropertyName": "Course",
+              "name": "CourseInstructors",
+              "type": "CourseInstructor"
+            },
+            {
+              "inversePropertyName": "Course",
+              "name": "Enrollments",
+              "type": "Enrollment"
+            }
+          ]
+        },
+        "Title": {
+          "type": "string"
+        },
+        "Credits": {
+          "x-nullable": false,
+          "type": "integer"
+        },
+        "Department": {
+          "type": "object",
+          "$ref": "#/definitions/Department"
+        },
+        "DepartmentID": {
+          "x-nullable": false,
+          "type": "integer",
+          "x-foreignKey": {
+            "parentTable": "Departments",
+            "parentEntityType": "Department",
+            "type": "Department",
+            "principalKey": "DepartmentID",
+            "name": "Department",
+            "textProperty": "Name",
+            "navigationProperty": "Courses"
+          }
+        },
+        "CourseInstructors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CourseInstructor"
+          }
+        },
+        "Enrollments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Enrollment"
+          }
+        }
+      }
+    },
+    "CourseInstructor": {
+      "x-table": "dbo.CourseInstructor",
+      "resource": "CourseInstructors",
+      "required": [
+        "CoursesCourseID",
+        "InstructorsID"
+      ],
+      "properties": {
+        "Course": {
+          "type": "object",
+          "$ref": "#/definitions/Course"
+        },
+        "CoursesCourseID": {
+          "x-key": true,
+          "x-nullable": false,
+          "type": "integer",
+          "x-foreignKey": {
+            "parentTable": "Course",
+            "parentEntityType": "Course",
+            "type": "Course",
+            "principalKey": "CourseID",
+            "name": "Course",
+            "textProperty": "Title",
+            "navigationProperty": "CourseInstructors"
+          }
+        },
+        "Instructor": {
+          "type": "object",
+          "$ref": "#/definitions/Instructor"
+        },
+        "InstructorsID": {
+          "x-nullable": false,
+          "type": "integer",
+          "x-foreignKey": {
+            "parentTable": "Instructor",
+            "parentEntityType": "Instructor",
+            "type": "Instructor",
+            "principalKey": "ID",
+            "name": "Instructor",
+            "textProperty": "LastName",
+            "navigationProperty": "CourseInstructors"
+          }
+        }
+      }
+    },
+    "Department": {
+      "x-table": "dbo.Departments",
+      "resource": "Departments",
+      "required": [
+        "DepartmentID",
+        "StartDate"
+      ],
+      "properties": {
+        "DepartmentID": {
+          "x-key": true,
+          "x-nullable": false,
+          "type": "integer",
+          "x-navigation": [
+            {
+              "inversePropertyName": "Department",
+              "name": "Courses",
+              "type": "Course"
+            }
+          ]
+        },
+        "Name": {
+          "type": "string"
+        },
+        "StartDate": {
+          "x-nullable": false,
+          "type": "string"
+        },
+        "Instructor": {
+          "type": "object",
+          "$ref": "#/definitions/Instructor"
+        },
+        "InstructorID": {
+          "type": "integer",
+          "x-foreignKey": {
+            "parentTable": "Instructor",
+            "parentEntityType": "Instructor",
+            "type": "Instructor",
+            "principalKey": "ID",
+            "name": "Instructor",
+            "textProperty": "LastName",
+            "navigationProperty": "Departments"
+          }
+        },
+        "ConcurrencyToken": {
+          "x-default-sql": "'00000000-0000-0000-0000-000000000000'",
+          "x-nullable": false,
+          "type": "string"
+        },
+        "Courses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Course"
+          }
+        }
+      }
+    },
+    "Enrollment": {
+      "x-table": "dbo.Enrollments",
+      "resource": "Enrollments",
+      "required": [
+        "EnrollmentID",
+        "CourseID",
+        "StudentID"
+      ],
+      "properties": {
+        "EnrollmentID": {
+          "x-key": true,
+          "x-nullable": false,
+          "type": "integer"
+        },
+        "Course": {
+          "type": "object",
+          "$ref": "#/definitions/Course"
+        },
+        "CourseID": {
+          "x-nullable": false,
+          "type": "integer",
+          "x-foreignKey": {
+            "parentTable": "Course",
+            "parentEntityType": "Course",
+            "type": "Course",
+            "principalKey": "CourseID",
+            "name": "Course",
+            "textProperty": "Title",
+            "navigationProperty": "Enrollments"
+          }
+        },
+        "Student": {
+          "type": "object",
+          "$ref": "#/definitions/Student"
+        },
+        "StudentID": {
+          "x-nullable": false,
+          "type": "integer",
+          "x-foreignKey": {
+            "parentTable": "Student",
+            "parentEntityType": "Student",
+            "type": "Student",
+            "principalKey": "ID",
+            "name": "Student",
+            "textProperty": "LastName",
+            "navigationProperty": "Enrollments"
+          }
+        },
+        "Grade": {
+          "type": "integer"
+        }
+      }
+    },
+    "Instructor": {
+      "x-table": "dbo.Instructor",
+      "resource": "Instructors",
+      "required": [
+        "ID",
+        "LastName",
+        "FirstName",
+        "HireDate"
+      ],
+      "properties": {
+        "ID": {
+          "x-key": true,
+          "x-nullable": false,
+          "type": "integer",
+          "x-navigation": [
+            {
+              "inversePropertyName": "Instructor",
+              "name": "CourseInstructors",
+              "type": "CourseInstructor"
+            },
+            {
+              "inversePropertyName": "Instructor",
+              "name": "Departments",
+              "type": "Department"
+            },
+            {
+              "inversePropertyName": "Instructor",
+              "name": "OfficeAssignments",
+              "type": "OfficeAssignment"
+            }
+          ]
+        },
+        "LastName": {
+          "x-nullable": false,
+          "type": "string"
+        },
+        "FirstName": {
+          "x-nullable": false,
+          "type": "string"
+        },
+        "HireDate": {
+          "x-nullable": false,
+          "type": "string"
+        },
+        "CourseInstructors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CourseInstructor"
+          }
+        },
+        "Departments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Department"
+          }
+        },
+        "OfficeAssignments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OfficeAssignment"
+          }
+        }
+      }
+    },
+    "OfficeAssignment": {
+      "x-table": "dbo.OfficeAssignments",
+      "resource": "OfficeAssignments",
+      "required": [
+        "InstructorID"
+      ],
+      "properties": {
+        "Instructor": {
+          "type": "object",
+          "$ref": "#/definitions/Instructor"
+        },
+        "InstructorID": {
+          "x-key": true,
+          "x-nullable": false,
+          "type": "integer",
+          "x-foreignKey": {
+            "parentTable": "Instructor",
+            "parentEntityType": "Instructor",
+            "type": "Instructor",
+            "principalKey": "ID",
+            "name": "Instructor",
+            "textProperty": "LastName",
+            "navigationProperty": "OfficeAssignments"
+          }
+        },
+        "Location": {
+          "type": "string"
+        }
+      }
+    },
+    "Student": {
+      "x-table": "dbo.Student",
+      "resource": "Students",
+      "required": [
+        "ID",
+        "LastName",
+        "FirstName",
+        "EnrollmentDate"
+      ],
+      "properties": {
+        "ID": {
+          "x-key": true,
+          "x-nullable": false,
+          "type": "integer",
+          "x-navigation": [
+            {
+              "inversePropertyName": "Student",
+              "name": "Enrollments",
+              "type": "Enrollment"
+            }
+          ]
+        },
+        "LastName": {
+          "x-nullable": false,
+          "type": "string"
+        },
+        "FirstName": {
+          "x-nullable": false,
+          "type": "string"
+        },
+        "EnrollmentDate": {
+          "x-nullable": false,
+          "type": "string"
+        },
+        "Enrollments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Enrollment"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/Courses": {
+      "get": {
+        "operationId": "getCourses",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$orderby",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$expand",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$top",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$skip",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$format",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/Course"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCourse",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Course",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/CourseInstructors": {
+      "get": {
+        "operationId": "getCourseInstructors",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$orderby",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$expand",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$top",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$skip",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$format",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/CourseInstructor"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCourseInstructor",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "CourseInstructor",
+            "schema": {
+              "$ref": "#/definitions/CourseInstructor"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/CourseInstructor"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Departments": {
+      "get": {
+        "operationId": "getDepartments",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$orderby",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$expand",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$top",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$skip",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$format",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/Department"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDepartment",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Department",
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Enrollments": {
+      "get": {
+        "operationId": "getEnrollments",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$orderby",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$expand",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$top",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$skip",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$format",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/Enrollment"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createEnrollment",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Enrollment",
+            "schema": {
+              "$ref": "#/definitions/Enrollment"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Enrollment"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Instructors": {
+      "get": {
+        "operationId": "getInstructors",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$orderby",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$expand",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$top",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$skip",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$format",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/Instructor"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createInstructor",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Instructor",
+            "schema": {
+              "$ref": "#/definitions/Instructor"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Instructor"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/OfficeAssignments": {
+      "get": {
+        "operationId": "getOfficeAssignments",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$orderby",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$expand",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$top",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$skip",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$format",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/OfficeAssignment"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createOfficeAssignment",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "OfficeAssignment",
+            "schema": {
+              "$ref": "#/definitions/OfficeAssignment"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/OfficeAssignment"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Students": {
+      "get": {
+        "operationId": "getStudents",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "$filter",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$orderby",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$expand",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$top",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$skip",
+            "type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "$format",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "properties": {
+                "value": {
+                  "items": {
+                    "$ref": "#/definitions/Student"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createStudent",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Student",
+            "schema": {
+              "$ref": "#/definitions/Student"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Student"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Courses({CourseID})": {
+      "delete": {
+        "operationId": "deleteCourse",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "CourseID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getCourseByCourseID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "CourseID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCourse",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "CourseID",
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Course",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "cancel": {
+        "operationId": "cancelCourseChanges",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Course",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/CourseInstructors({CoursesCourseID})": {
+      "delete": {
+        "operationId": "deleteCourseInstructor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "CoursesCourseID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getCourseInstructorByCoursesCourseID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "CoursesCourseID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/CourseInstructor"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCourseInstructor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "CoursesCourseID",
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "CourseInstructor",
+            "schema": {
+              "$ref": "#/definitions/CourseInstructor"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "cancel": {
+        "operationId": "cancelCourseInstructorChanges",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "CourseInstructor",
+            "schema": {
+              "$ref": "#/definitions/CourseInstructor"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Departments({DepartmentID})": {
+      "delete": {
+        "operationId": "deleteDepartment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "DepartmentID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getDepartmentByDepartmentID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "DepartmentID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateDepartment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "DepartmentID",
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Department",
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "cancel": {
+        "operationId": "cancelDepartmentChanges",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Department",
+            "schema": {
+              "$ref": "#/definitions/Department"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Enrollments({EnrollmentID})": {
+      "delete": {
+        "operationId": "deleteEnrollment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "EnrollmentID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getEnrollmentByEnrollmentID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "EnrollmentID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Enrollment"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateEnrollment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "EnrollmentID",
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Enrollment",
+            "schema": {
+              "$ref": "#/definitions/Enrollment"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "cancel": {
+        "operationId": "cancelEnrollmentChanges",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Enrollment",
+            "schema": {
+              "$ref": "#/definitions/Enrollment"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Instructors({ID})": {
+      "delete": {
+        "operationId": "deleteInstructor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getInstructorByID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Instructor"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateInstructor",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ID",
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Instructor",
+            "schema": {
+              "$ref": "#/definitions/Instructor"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "cancel": {
+        "operationId": "cancelInstructorChanges",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Instructor",
+            "schema": {
+              "$ref": "#/definitions/Instructor"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/OfficeAssignments({InstructorID})": {
+      "delete": {
+        "operationId": "deleteOfficeAssignment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "InstructorID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getOfficeAssignmentByInstructorID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "InstructorID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/OfficeAssignment"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateOfficeAssignment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "InstructorID",
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "OfficeAssignment",
+            "schema": {
+              "$ref": "#/definitions/OfficeAssignment"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "cancel": {
+        "operationId": "cancelOfficeAssignmentChanges",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "OfficeAssignment",
+            "schema": {
+              "$ref": "#/definitions/OfficeAssignment"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/Students({ID})": {
+      "delete": {
+        "operationId": "deleteStudent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getStudentByID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Student"
+            }
+          },
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateStudent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ID",
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Student",
+            "schema": {
+              "$ref": "#/definitions/Student"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "cancel": {
+        "operationId": "cancelStudentChanges",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Student",
+            "schema": {
+              "$ref": "#/definitions/Student"
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "default": {
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "basePath": "/odata/Gdata",
+  "host": "localhost:5000",
+  "schemes": [
+    "http"
+  ]
+}

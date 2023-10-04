@@ -1,0 +1,564 @@
+{
+  "components": [
+    {
+      "type": "content",
+      "container": "main",
+      "components": [
+        {
+          "type": "heading",
+          "name": "pageTitle",
+          "size": "H1",
+          "text": "Course"
+        },
+        {
+          "type": "row",
+          "style": {
+            "height": "100%"
+          },
+          "components": [
+            {
+              "type": "col",
+              "class": "col-md-6",
+              "components": [
+                {
+                  "type": "card",
+                  "style": {
+                    "height": "100%"
+                  },
+                  "components": [
+                    {
+                      "icon": "add_circle_outline",
+                      "name": "button0",
+                      "style": {
+                        "marginBottom": "10px"
+                      },
+                      "text": "Add",
+                      "type": "button",
+                      "events": {
+                        "click": [
+                          {
+                            "name": "course",
+                            "type": "set",
+                            "value": "new G.Models.Gdata.Course()",
+                            "valueType": "G.Models.Gdata.Course",
+                            "then": [
+                              {
+                                "code": "await grid0.Reload();",
+                                "type": "execute"
+                              },
+                              {
+                                "code": "await InvokeAsync(() => { StateHasChanged(); });",
+                                "type": "execute"
+                              }
+                            ]
+                          },
+                          {
+                            "name": "isEdit",
+                            "type": "set",
+                            "value": "false",
+                            "valueType": "bool"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "name": "grid0",
+                      "allowFiltering": true,
+                      "filterMode": "advanced",
+                      "allowPaging": true,
+                      "allowSorting": true,
+                      "data": "${getCoursesResult}",
+                      "events": {
+                        "loadData": [],
+                        "rowSelect": [
+                          {
+                            "name": "isEdit",
+                            "type": "set",
+                            "value": "true",
+                            "valueType": "bool"
+                          },
+                          {
+                            "name": "course",
+                            "type": "set",
+                            "value": "${event}",
+                            "valueType": "G.Models.Gdata.Course"
+                          }
+                        ]
+                      },
+                      "title": "",
+                      "columns": [
+                        {
+                          "property": "CourseID",
+                          "title": "Course ID"
+                        },
+                        {
+                          "property": "Title",
+                          "title": "Title"
+                        },
+                        {
+                          "property": "Credits",
+                          "title": "Credits"
+                        },
+                        {
+                          "property": "DepartmentID",
+                          "sortProperty": "Department.Name",
+                          "groupProperty": "Department.Name",
+                          "filterProperty": "Department.Name",
+                          "template": "${data.Department?.Name}",
+                          "title": "Department"
+                        },
+                        {
+                          "filterable": false,
+                          "sortable": false,
+                          "width": "70px",
+                          "textAlign": "center",
+                          "template": [
+                            {
+                              "attributes": [
+                                {
+                                  "name": "@onclick:stopPropagation",
+                                  "value": true
+                                }
+                              ],
+                              "buttonStyle": "danger",
+                              "icon": "close",
+                              "name": "gridDeleteButton",
+                              "text": "",
+                              "size": "sm",
+                              "type": "button",
+                              "events": {
+                                "click": [
+                                  {
+                                    "condition": "await DialogService.Confirm(\"Are you sure you want to delete this record?\") == true",
+                                    "error": [
+                                      {
+                                        "detail": "Unable to delete Course",
+                                        "severity": "error",
+                                        "summary": "Error",
+                                        "type": "notify"
+                                      }
+                                    ],
+                                    "name": "Gdata.deleteCourse",
+                                    "parameters": [
+                                      {
+                                        "name": "CourseID",
+                                        "value": "${data.CourseID}"
+                                      }
+                                    ],
+                                    "then": [
+                                      {
+                                        "code": "await grid0.Reload();",
+                                        "condition": "result != null",
+                                        "type": "execute"
+                                      }
+                                    ],
+                                    "type": "invoke"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "type": "datagrid",
+                      "itemType": "G.Models.Gdata.Course",
+                      "columnWidth": "150px"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "col",
+              "class": "col-md-6",
+              "components": [
+                {
+                  "type": "card",
+                  "components": [
+                    {
+                      "type": "row",
+                      "components": [
+                        {
+                          "type": "col",
+                          "class": "col-md-12",
+                          "components": [
+                            {
+                              "type": "template-form",
+                              "name": "form0",
+                              "components": [
+                                {
+                                  "type": "row",
+                                  "style": {
+                                    "marginBottom": "1rem"
+                                  },
+                                  "components": [
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-3",
+                                      "components": [
+                                        {
+                                          "type": "label",
+                                          "text": "Course Id",
+                                          "component": "CourseID",
+                                          "name": "CourseIDLabel",
+                                          "style": {
+                                            "width": "100%"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-9",
+                                      "components": [
+                                        {
+                                          "valueType": "int",
+                                          "type": "numeric",
+                                          "name": "CourseID",
+                                          "style": {
+                                            "display": "block",
+                                            "width": "100%"
+                                          },
+                                          "value": "${course.CourseID}"
+                                        },
+                                        {
+                                          "type": "required-validator",
+                                          "name": "CourseIDRequiredValidator",
+                                          "component": "CourseID",
+                                          "text": "CourseID is required",
+                                          "style": {
+                                            "position": "absolute"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "row",
+                                  "style": {
+                                    "marginBottom": "1rem"
+                                  },
+                                  "components": [
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-3",
+                                      "components": [
+                                        {
+                                          "type": "label",
+                                          "text": "Title",
+                                          "component": "Title",
+                                          "name": "TitleLabel",
+                                          "style": {
+                                            "width": "100%"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-9",
+                                      "components": [
+                                        {
+                                          "valueType": "string",
+                                          "type": "textbox",
+                                          "name": "Title",
+                                          "style": {
+                                            "width": "100%"
+                                          },
+                                          "value": "${course.Title}"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "row",
+                                  "style": {
+                                    "marginBottom": "1rem"
+                                  },
+                                  "components": [
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-3",
+                                      "components": [
+                                        {
+                                          "type": "label",
+                                          "text": "Credits",
+                                          "component": "Credits",
+                                          "name": "CreditsLabel",
+                                          "style": {
+                                            "width": "100%"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-9",
+                                      "components": [
+                                        {
+                                          "valueType": "int",
+                                          "type": "numeric",
+                                          "name": "Credits",
+                                          "style": {
+                                            "display": "block",
+                                            "width": "100%"
+                                          },
+                                          "value": "${course.Credits}"
+                                        },
+                                        {
+                                          "type": "required-validator",
+                                          "name": "CreditsRequiredValidator",
+                                          "component": "Credits",
+                                          "text": "Credits is required",
+                                          "style": {
+                                            "position": "absolute"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "row",
+                                  "style": {
+                                    "marginBottom": "1rem"
+                                  },
+                                  "components": [
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-3",
+                                      "components": [
+                                        {
+                                          "type": "label",
+                                          "text": "Department",
+                                          "component": "DepartmentID",
+                                          "name": "DepartmentIDLabel",
+                                          "style": {
+                                            "width": "100%"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "col",
+                                      "class": "col-md-9",
+                                      "components": [
+                                        {
+                                          "data": "${getDepartmentsResult}",
+                                          "textProperty": "Name",
+                                          "valueProperty": "DepartmentID",
+                                          "placeholder": "Choose Department",
+                                          "valueType": "int",
+                                          "type": "dropdown",
+                                          "name": "DepartmentID",
+                                          "style": {
+                                            "display": "block",
+                                            "width": "100%"
+                                          },
+                                          "value": "${course.DepartmentID}"
+                                        },
+                                        {
+                                          "type": "required-validator",
+                                          "name": "DepartmentIDRequiredValidator",
+                                          "component": "DepartmentID",
+                                          "text": "DepartmentID is required",
+                                          "style": {
+                                            "position": "absolute"
+                                          },
+                                          "defaultValue": "0"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "row",
+                                  "components": [
+                                    {
+                                      "type": "col",
+                                      "class": "col offset-sm-3",
+                                      "components": [
+                                        {
+                                          "type": "button",
+                                          "buttonType": "submit",
+                                          "icon": "save",
+                                          "text": "Save",
+                                          "buttonStyle": "primary"
+                                        },
+                                        {
+                                          "type": "button",
+                                          "buttonStyle": "light",
+                                          "style": {
+                                            "marginLeft": "1rem"
+                                          },
+                                          "text": "Cancel",
+                                          "events": {},
+                                          "visible": false
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "events": {
+                                "submit": [
+                                  {
+                                    "error": [
+                                      {
+                                        "detail": "Unable to update Course",
+                                        "severity": "error",
+                                        "summary": "Error",
+                                        "type": "notify"
+                                      },
+                                      {
+                                        "name": "hasChanges",
+                                        "type": "set",
+                                        "value": "result is DbUpdateConcurrencyException",
+                                        "valueType": "bool"
+                                      }
+                                    ],
+                                    "name": "Gdata.updateCourse",
+                                    "parameters": [
+                                      {
+                                        "name": "CourseID",
+                                        "value": "${course.CourseID}"
+                                      },
+                                      {
+                                        "name": "Course",
+                                        "value": "${course}"
+                                      }
+                                    ],
+                                    "then": [
+                                      {
+                                        "detail": "Course updated!",
+                                        "severity": "success",
+                                        "summary": "Success",
+                                        "type": "notify"
+                                      },
+                                      {}
+                                    ],
+                                    "type": "invoke",
+                                    "condition": "${isEdit}"
+                                  },
+                                  {
+                                    "error": [
+                                      {
+                                        "detail": "Unable to create new Course!",
+                                        "severity": "error",
+                                        "summary": "Error",
+                                        "type": "notify"
+                                      }
+                                    ],
+                                    "condition": "${!this.isEdit}",
+                                    "name": "Gdata.createCourse",
+                                    "parameters": [
+                                      {
+                                        "name": "Course",
+                                        "value": "${event}"
+                                      }
+                                    ],
+                                    "then": [
+                                      {
+                                        "name": "course",
+                                        "type": "set",
+                                        "value": "new G.Models.Gdata.Course()",
+                                        "valueType": "G.Models.Gdata.Course"
+                                      },
+                                      {
+                                        "detail": "Course created!",
+                                        "severity": "success",
+                                        "summary": "Success",
+                                        "type": "notify"
+                                      }
+                                    ],
+                                    "type": "invoke"
+                                  }
+                                ]
+                              },
+                              "itemType": "G.Models.Gdata.Course",
+                              "data": "${course}",
+                              "visible": "${course != null && canEdit}"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "style": {
+                    "height": "100%"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "events": {
+    "load": [
+      {
+        "name": "hasChanges",
+        "type": "set",
+        "value": "false",
+        "valueType": "bool"
+      },
+      {
+        "name": "canEdit",
+        "type": "set",
+        "value": "true",
+        "valueType": "bool"
+      },
+      {
+        "name": "Gdata.getDepartments",
+        "parameters": [],
+        "then": [
+          {
+            "name": "getDepartmentsResult",
+            "type": "set",
+            "value": "${result}",
+            "valueType": "IEnumerable<G.Models.Gdata.Department>"
+          }
+        ],
+        "type": "invoke"
+      },
+      {
+        "name": "Gdata.getCourses",
+        "parameters": [
+          {
+            "name": "$expand",
+            "value": "Enrollments,Department,CourseInstructors"
+          }
+        ],
+        "then": [
+          {
+            "name": "getCoursesResult",
+            "type": "set",
+            "value": "${result}",
+            "valueType": "IEnumerable<G.Models.Gdata.Course>"
+          },
+          {
+            "name": "course",
+            "type": "set",
+            "value": "result.FirstOrDefault()",
+            "valueType": "G.Models.Gdata.Course"
+          },
+          {
+            "name": "isEdit",
+            "type": "set",
+            "value": "true",
+            "valueType": "bool"
+          }
+        ],
+        "type": "invoke"
+      }
+    ]
+  },
+  "name": "Course",
+  "layout": "Main",
+  "access": [
+    "Authenticated"
+  ]
+}
